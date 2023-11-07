@@ -1,0 +1,9 @@
+                  DMC for fam_cart_coor
+
+DMC Simulation started at 2023-08-14 09:24:04.536867
+Number of random walkers: 30000
+Number of total steps: 55000
+Number of steps before averaging: 5000
+Stepsize: 5.0
+Alpha: 0.1
+
