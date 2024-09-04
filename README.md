@@ -29,14 +29,18 @@ a) Create an environment named (e.g.) physnet_dmc_env, install Python 3.6:
     (deactivating it by typing: conda deactivate)
 
 
-b) install tensorflow (and all dependencies) using conda:
+b) install tensorflow (and dependencies) using conda (make sure you install the dependencies
+with activated environment):
 
-        conda install tensorflow-gpu==1.13.1
+        pip install -r requirements.txt
 
-    if a compatible gpu is available, else try:
+    if a compatible gpu is available. If you plan to use the DMC code on a CPU (or do not have a
+    GPU available) replace the line "tensorflow-gpu==1.12.0" in requirements.txt with "tensorflow==1.12.0"
 
-        conda install tensorflow==1.13.1
-
+c) For GPU use: The codes make use of Cuda 9.0, which needs to be installed if not available yet. On
+   the pc-studix cluster this involves loading the following module
+   
+        module load gcc/gcc4.8.5-openmpi1.10-cuda9.0
 ### Example
 
 The use of the code is illustrated based on the formic acid monomer molecule, for
@@ -47,9 +51,14 @@ The repository contains the following files and folders:
 
 i) dmc_physnet_main.py: Contains the DMC code
 
-ii) fam_cart_coor.xyz: Contains the equilibrium FAM geometry and a reference geometry
+ii) fam_cart_coor.xyz: Contains the equilibrium FAM geometry and a reference geometry (this could be a transition state
+    or otherwise you could start from a distorted structure)
 
-iii) run_fam_cart.inp: Contains the DMC simulation settings and NN architecture used
+iii) run_fam_cart.inp: Contains the DMC simulation settings and NN architecture used. Lines 1 to 7 concern the
+    DMC settings, while the other lines define the NN architecture and should be exactly as used during training.
+    Note that if the training was run without the Grimme Dispersion values (grimme_s6, grimme_s8, grimme_a1, grimme_a2)
+    these lines need to be removed. Also comare to the parser in the main DMC code which reads these imputs for detailed
+    explanation. 
 
 iv) tl_models: Contains the NN models that are transfer learnt to the CCSD(T)/aVTZ level of theory
 
@@ -64,11 +73,14 @@ The following files are produced by the DMC code:
 
 i) fam_cart_coor.log: Summarizes the DMC settings and gives the final result of the simulation (ZPE of FAM on the PES is around 7320 cm**-1, see Ref. [3])
 
-ii) fam_cart_coor.pot: Keeps track of the reference energy and number of alive walkers throughout the simulation.
+ii) fam_cart_coor.pot: Keeps track of the energy and number of alive walkers throughout the simulation, e.g.
+939   301   0.0310269412001634   6809.626482475554, which corresponds to the step, the number of alive walkers, ZPE in hartree, ZPE in cm**-1
 
 iii) configs_fam_cart_coor.xyz: Saves the walkers from the last 10 DMC steps for visualization purposes (in .xyz format)
 
-iv) defective_fam_cart_coor.xyz: Saves walkers that are defective, i.e. from regions on the PES that were insufficiently sampled (holes).
+iv) defective_fam_cart_coor.xyz: Saves walkers that are defective, i.e. from holes on the PES with energies smaller than the minimum you
+have defined. Note that this does not guarantee that the structures with high energies are physically sound (which could be the case for
+any ML PES).
 
 ### How to cite 
 
@@ -93,5 +105,5 @@ monomer and dimer", Phys. Chem. Chem. Phys., 2022, 24, 5269-5281.
 ### Contact
 
 If you have any questions about the PES free to contact Silvan Kaeser
-(silvan.kaeser@unibas.ch)
+(silvan.kaeser@unibas.ch) or Prof. Markus Meuwly (m.meuwly@unibas.ch).
 
